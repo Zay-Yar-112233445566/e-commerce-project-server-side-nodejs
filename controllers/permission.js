@@ -28,7 +28,7 @@ const add = async (req, res, next) => {
     }
 }
 const update = async (req, res, next) => {
-    let dbPermission = await DB.findById(req.params.id);
+    let dbPermission = await DB.findById(req.params.id).select('-__v');
     if (dbPermission) {
         // await DB.findByIdAndUpdate(dbPermission._id,  req.body);
         let updatedPermission = await DB.findByIdAndUpdate(dbPermission._id, req.body, { new: true });

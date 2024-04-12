@@ -8,6 +8,10 @@ module.exports = {
     RoleSchema:{
         add: Joi.object({
             name:Joi.string().required()
+        }),
+        addPermission: Joi.object({
+            roleId:Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
+            permissionId:Joi.string().regex(/^[0-9a-fA-F]{24}$/).required()
         })
     },
     AllSchema:{

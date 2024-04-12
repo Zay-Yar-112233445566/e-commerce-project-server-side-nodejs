@@ -31,16 +31,16 @@ const get = async (req, res, next) => {
 }
 
 const update = async (req, res, next) => {
-    let dbRole = await DB.findById(req.params.id);
+    let dbRole = await DB.findById(req.params.id).select('-__v');
     if (dbRole) {
-        let updateddbRole = await DB.findByIdAndUpdate(dbRole._id, req.body, { new: true }).select('-__v');
-        if (updateddbRole) {
-            Helper.fMsg(res, "Role successfully updated.", updateddbRole);
+        let updatedRole = await DB.findByIdAndUpdate(dbRole._id, req.body, { new: true });
+        if (updatedRole) {
+            Helper.fMsg(res, "Permission successfully updated.", updatedRole);
         } else {
             next(new Error("Update proecss failed!!"));
         }
     } else {
-        next(new Error("Error,There is no any role with that id"));
+        next(new Error("Error,There is no any permission with that id"));
     }
 }
 const drop = async (req, res, next) => {
@@ -58,14 +58,13 @@ const drop = async (req, res, next) => {
 }
 
 const permissionAddToRole = async (req, res, next) => {
-    let dbRole = await DB.findById(req.params.roleId);
-    let dbPermission = await PermissionDB.findById(req.params.permissionId);
-
+    let dbRole = await DB.findById(req.body.roleId);
+    let dbPermission = await PermissionDB.findById(req.body.permissionId);    
     if (dbRole && dbPermission) {
-        let reult = await DB.findByIdAndUpdate(dbRole._id, { $push: { permissions: dbPermission._id } });
+        let result = await DB.findByIdAndUpdate(dbRole._id, { $push: { permissions: dbPermission._id } });
         Helper.fMsg(res, "Permission add to roled",result); 
     } else {
-        next(new Error(""));
+        next(new Error("RoleId and PermissionId need to be valided!"));
     }
 }
 module.exports = {
@@ -73,5 +72,6 @@ module.exports = {
     getAll,
     get,
     update,
-    drop
+    drop,
+    permissionAddToRole
 }
