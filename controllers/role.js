@@ -13,7 +13,7 @@ let add = async (req, res, next) => {
 }
 
 const getAll = async (req, res, next) => {
-    let roles = await DB.find().select('-__v');
+    let roles = await DB.find().populate('permissions','-__v').select('-__v');
     if (roles !== null && roles.length > 0) {
         Helper.fMsg(res, "Get All roles successfully!!", roles);
     } else {
@@ -61,8 +61,21 @@ const permissionAddToRole = async (req, res, next) => {
     let dbRole = await DB.findById(req.body.roleId);
     let dbPermission = await PermissionDB.findById(req.body.permissionId);    
     if (dbRole && dbPermission) {
-        let result = await DB.findByIdAndUpdate(dbRole._id, { $push: { permissions: dbPermission._id } });
+       await DB.findByIdAndUpdate(dbRole._id, { $push: { permissions: dbPermission._id } });
+       let result = await DB.findById(dbRole._id);
         Helper.fMsg(res, "Permission add to roled",result); 
+    } else {
+        next(new Error("RoleId and PermissionId need to be valided!"));
+    }
+}
+
+const permissionRemoveFromRole = async (req, res, next) => {
+    let dbRole = await DB.findById(req.body.roleId);
+    let dbPermission = await PermissionDB.findById(req.body.permissionId);    
+    if (dbRole && dbPermission) {
+        await DB.findByIdAndUpdate(dbRole._id, { $pull: { permissions: dbPermission._id } });
+        let result =  await DB.findById(dbRole._id);
+        Helper.fMsg(res, "Permission remove from  role",result); 
     } else {
         next(new Error("RoleId and PermissionId need to be valided!"));
     }
@@ -73,5 +86,6 @@ module.exports = {
     get,
     update,
     drop,
-    permissionAddToRole
+    permissionAddToRole,
+    permissionRemoveFromRole
 }
