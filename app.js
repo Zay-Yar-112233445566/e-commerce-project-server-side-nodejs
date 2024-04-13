@@ -6,11 +6,14 @@ mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DB_NAME}`);
 //importing related routers 
 const permissionRouter = require('./routes/permission');
 const roleRouter = require('./routes/role');
+const userRouter = require('./routes/user');
 const migration = require('./migrations/migrator');
 
 //deploy routers
+app.use('/users',userRouter);
 app.use('/permissions', permissionRouter);
 app.use('/roles',roleRouter);
+
 app.get('/usershow',migration.migrate);
 app.get('/backup',migration.backup);
 
