@@ -6,6 +6,10 @@ module.exports = {
             email:Joi.string().email().required(),
             phone:Joi.string().min(9).max(15).required(),
             password: Joi.string().min(8).required()
+         }),
+         login:Joi.object({
+            email:Joi.string().email().required(),
+            password: Joi.string().min(8).required()
          })
     },
     PermissionSchema: {

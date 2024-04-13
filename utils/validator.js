@@ -11,14 +11,20 @@ module.exports = {
     },
     validateParam: (schema, name) => {
         return (req, res, next) => {
-            let obj ={};
+            let obj = {};
             obj[`${name}`] = req.params[`${name}`];
             let result = schema.validate(obj);
-            if(result.error){
+            if (result.error) {
                 next(new Error(result.error.message));
-            }else{
+            } else {
                 next();
             }
+        }
+    },
+    validateToken: () => {
+        return (req, res, next) => {
+            let token = req.headers.authorization;
+            console.log(token);
         }
     }
 }
